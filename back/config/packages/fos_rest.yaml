@@ -1,0 +1,16 @@
+# Read the documentation: https://symfony.com/doc/master/bundles/FOSRestBundle/index.html
+fos_rest:
+#    param_fetcher_listener:  true
+#    allowed_methods_listener:  true
+#    routing_loader: false
+#    view:
+#        view_response_listener:  true
+#    exception:
+#        codes:
+#            'Symfony\Component\Security\Core\Exception\BadCredentialsException': 403
+#        messages:
+#            'Symfony\Component\Security\Core\Exception\BadCredentialsException': true
+    format_listener:
+        rules:
+            - { path: ^/api, prefer_extension: true, fallback_format: json, priorities: [ json, html ] }
+            - { path: ^/, prefer_extension: true, fallback_format: html, priorities: [ html ] }

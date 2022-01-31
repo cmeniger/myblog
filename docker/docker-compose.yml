@@ -1,0 +1,69 @@
+version: '3.4'
+
+services:
+  app_back:
+    container_name: "app_back"
+    build:
+      context: ../
+      dockerfile: ./docker/app_back/Dockerfile
+    env_file:
+      - ./app_back/.env
+    volumes:
+      - ../${FOLDER_BACK}:/app
+      - ./app_back/logs:/var/log/nginx
+      - ./app_back/nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - "3000:3000"
+
+  app_back_dev:
+    container_name: "app_back_dev"
+    build:
+      context: ../
+      dockerfile: ./docker/app_back/Dockerfile
+      target: stage-dev
+    volumes:
+      - ../${FOLDER_BACK}:/app
+
+  app_front:
+    container_name: "app_front"
+    build:
+      context: ../
+      dockerfile: ./docker/app_front/Dockerfile
+      args:
+        - FOLDER_FRONT=${FOLDER_FRONT}
+    env_file:
+      - ./app_front/.env
+    volumes:
+      - ./app_front/logs:/var/log/nginx
+      - ./app_front/nginx.conf:/etc/nginx/nginx.conf
+    ports:
+      - "80:80"
+
+  app_front_dev:
+    container_name: "app_front_dev"
+    build:
+      context: ../
+      dockerfile: ./docker/app_front/Dockerfile
+      target: stage-dev
+      args:
+        - FOLDER_FRONT=${FOLDER_FRONT}
+    volumes:
+      - ../${FOLDER_FRONT}:/app
+
+  mysql:
+    image: mysql:5.6.23
+    container_name: mysql
+    env_file:
+      - ./mysql/.env
+    volumes:
+      - ../${FOLDER_MYSQL}/data:/var/lib/mysql
+
+  sqlite:
+    image: nouchka/sqlite3:latest
+    container_name: sqlite
+    env_file:
+      - ./sqlite/.env
+    volumes:
+      - ../${FOLDER_SQLITE}/data:/root/db
+    stdin_open: true
+    tty: true
